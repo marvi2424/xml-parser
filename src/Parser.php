@@ -128,7 +128,7 @@ class Parser {
         ];
 
         // Parse product features data
-        // NOTE: missing an present product features will be stored in the same table and will be differentiated by
+        // NOTE: missing and present product features will be stored in the same table and will be differentiated by
         // is_missing column
         $products_features = [];
 
