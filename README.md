@@ -2,11 +2,15 @@
 
 A PHP script to dump_data.xml XML data and perform `insert`, `update`, and `delete` operations on a MySQL database.
 
+## Database Schema
+![Database Schema](db-schema.png)
+
+
 ## Setup
 
 1. **Install Dependencies**
    Run the following command to install required dependencies:
-   ```bash
+   ```
    composer install
    ```
 
@@ -21,7 +25,7 @@ A PHP script to dump_data.xml XML data and perform `insert`, `update`, and `dele
     DB_PASSWORD=your_database_password
     ```
    
-3. **(Pseudo) Migrations**
+3. **Database Setup Script**
    
    Create database tables if not already created
    ```
@@ -43,7 +47,7 @@ A PHP script to dump_data.xml XML data and perform `insert`, `update`, and `dele
    
     Delete
     ```
-    php src/main.php delete product_id={product_id}
+    php src/main.php delete
     ```
 
 

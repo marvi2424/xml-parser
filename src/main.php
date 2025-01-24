@@ -26,10 +26,14 @@ try {
         $orm->insert('products', $data['product']);
 
         foreach ($data['details'] as $detail) {
-            $orm->insert('details_data', $detail);
+            $orm->insert('product_details', $detail);
         }
 
-        $orm->insert('products_headers', $data['products_headers']);
+        $orm->insert('product_headers', $data['product_headers']);
+
+        foreach ($data['product_features'] as $feature) {
+            $orm->insert('product_features', $feature);
+        }
 
         echo "Data successfully inserted.\n";
     }
@@ -40,6 +44,7 @@ try {
         $data = $parser->parseXML();
         $updateProductData = $data['product'];
         $updateDetailsData = $data['details'];
+        $updateProductHeadersData = $data['product_headers'];
 
         $product_id = $updateProductData['product_id'] ?? '';
 
@@ -48,20 +53,29 @@ try {
             exit;
         }
 
-        // Perform the update for the product using ORM, based on the condition (e.g., product_id=12345)
+        // Update the product by product_id
         $orm->update('products', $updateProductData, ['product_id' => $product_id]);
 
-        // Perform the update for details data (if needed), using the same condition
+        // Update details data by skuId
         foreach ($updateDetailsData as $detail) {
-            $skuId = $detail['skuID'];
-            if (empty($skuId)) {
+            $sku_id = $detail['sku_id'];
+            if (empty($sku_id)) {
                 echo "No skuID found for this details data. Skipping this row.\n";
                 continue;
             }
-            $orm->update('details_data', $detail, ['sku_id' => $skuId]);
+            $orm->update('product_details', $detail, ['sku_id' => $sku_id]);
         }
 
-        $orm->update('products_headers', $data['products_headers'], ['product_id' => $product_id]);
+        // Update Product Headers by product_id
+        $orm->update('product_headers', $updateProductHeadersData, ['product_id' => $product_id]);
+
+        // Refresh product features: delete existing features for the product and insert the updated ones
+        // Reason: The XML only provides the feature names without unique identifiers, so we replace all features to ensure accuracy
+        $orm->delete('product_features', ['product_id' => $product_id]);
+
+        foreach ($data['product_features'] as $feature) {
+            $orm->insert('product_features', $feature);
+        }
 
         echo "Data successfully updated.\n";
     }
@@ -70,29 +84,25 @@ try {
         echo "Deleting data from the database...\n";
 
         $data = $parser->parseXML();
-        $updateProductData = $data['product'];
+        $product_id = $data['product']['product_id'] ?? '';
 
         // Ensure a condition is provided for delete
-        if (!isset($argv[2])) {
-            echo "Error: No condition specified for delete.\n";
-            showHelp();
+        if (empty($product_id)) {
+            echo "Error: No product_id found for deletion.\n";
             exit;
         }
 
-        // Prepare for condition and data arguments
-        $condition = $argv[2];
-
-        // Split the condition into field and value
-        list($conditionField, $conditionValue) = explode('=', $condition);
-
         // Delete details data
-        $orm->delete('details_data', [$conditionField => $conditionValue]);
+        $orm->delete('product_details', ['product_id' => $product_id]);
+
+        // Delete product headers data
+        $orm->delete('product_headers', ['product_id' => $product_id]);
+
+        // Delete product features data
+        $orm->delete('product_features', ['product_id' => $product_id]);
 
         // Delete products data
-        $orm->delete('products', [$conditionField => $conditionValue]);
-
-        // Delete products data
-        $orm->delete('products_headers', [$conditionField => $conditionValue]);
+        $orm->delete('products', ['product_id' => $product_id]);
 
         echo "Data successfully deleted.\n";
     }

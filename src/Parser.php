@@ -21,12 +21,16 @@ class Parser {
     }
 
     /**
+     *
+     * Parse products XML to associative arrays
+     *
      * @return array
      */
     public function parseXML(): array
     {
         $xml = simplexml_load_file($this->filePath);
 
+        // Parse product Data
         $product = [
             'product_id' => (string)$xml->productID,
             'bleaching_code' => (int)$xml->bleachingCode,
@@ -41,6 +45,7 @@ class Parser {
             'washability_code' => (int)$xml->washabilityCode,
         ];
 
+        // Parse product details data
         $details = [];
         foreach ($xml->definitions->detailsData as $detailsData) {
             $details[] = [
@@ -68,37 +73,38 @@ class Parser {
             ];
         }
 
-        $products_headers = [
+        // Parse product headers Data
+        $product_headers = [
             'product_id' => (string)$xml->productID, // Link to the parent productID
-            'bag' => filter_var((string)$xml->definitions->headerData->bag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'bag' => $xml->definitions->headerData->bag ? 1 : 0,
             'bleaching_description' => (string)$xml->definitions->headerData->bleachingDescription,
             'brand' => (string)$xml->definitions->headerData->brand,
             'brand_code' => (string)$xml->definitions->headerData->brandCode,
             'catalog' => (string)$xml->definitions->headerData->catalog,
             'composition' => (string)$xml->definitions->headerData->composition,
             'creation_date_in_database' => (string)$xml->definitions->headerData->creationDateInDatabase,
-            'custom1' => (string)$xml->definitions->headerData->custom1,
-            'custom2' => (string)$xml->definitions->headerData->custom2,
-            'custom3' => (string)$xml->definitions->headerData->custom3,
-            'drink_holder' => filter_var((string)$xml->definitions->headerData->drinkHolder, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'custom_1' => (string)$xml->definitions->headerData->custom1,
+            'custom_2' => (string)$xml->definitions->headerData->custom2,
+            'custom_3' => (string)$xml->definitions->headerData->custom3,
+            'drink_holder' => $xml->definitions->headerData->drinkHolder ? 1 : 0,
             'dry_cleaning_description' => (string)$xml->definitions->headerData->dryCleaningDescription,
             'drying_description' => (string)$xml->definitions->headerData->dryingDescription,
-            'eshop_display_name' => (string)$xml->definitions->headerData->EShopDisplayName,
-            'eshop_long_description' => (string)$xml->definitions->headerData->EShopLongDescription,
-            'ergonomic_seat' => filter_var((string)$xml->definitions->headerData->ergonomicSeat, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'e_shop_display_name' => (string)$xml->definitions->headerData->EShopDisplayName,
+            'e_shop_long_description' => (string)$xml->definitions->headerData->EShopLongDescription,
+            'ergonomic_seat' => $xml->definitions->headerData->ergonomicSeat ? 1 : 0,
             'fastening_type_description' => (string)$xml->definitions->headerData->fasteningTypeDescription,
             'fastening_type_textile' => (string)$xml->definitions->headerData->fasteningTypeTextile,
-            'flat' => filter_var((string)$xml->definitions->headerData->flat, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
-            'free_delivery' => filter_var((string)$xml->definitions->headerData->freeDelivery, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'flat' => $xml->definitions->headerData->flat ? 1 : 0,
+            'free_delivery' => $xml->definitions->headerData->freeDelivery ? 1 : 0,
             'gender' => (string)$xml->definitions->headerData->gender,
-            'indicator_of_it_has_to_be_assembled' => filter_var((string)$xml->definitions->headerData->indicatorOfItHasToBeAssembled, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'indicator_of_it_has_to_be_assembled' => $xml->definitions->headerData->indicatorOfItHasToBeAssembled ? 1 : 0,
             'ironing_description' => (string)$xml->definitions->headerData->ironingDescription,
             'last_date_changed' => (string)$xml->definitions->headerData->lastDateChanged,
             'last_user_changed' => (string)$xml->definitions->headerData->lastUserChanged,
             'product_status' => (string)$xml->definitions->headerData->productStatus,
             'pullout_type' => (string)$xml->definitions->headerData->pulloutType,
             'pullout_type_description' => (string)$xml->definitions->headerData->pulloutTypeDescription,
-            'punnet' => filter_var((string)$xml->definitions->headerData->punnet, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'punnet' => $xml->definitions->headerData->punnet ? 1 : 0,
             'sap_category_id' => (string)$xml->definitions->headerData->sapCategoryID,
             'sap_category_name' => (string)$xml->definitions->headerData->sapCategoryName,
             'sap_division_id' => (string)$xml->definitions->headerData->sapDivisionID,
@@ -111,21 +117,25 @@ class Parser {
             'sap_name' => (string)$xml->definitions->headerData->sapName,
             'sap_universe_id' => (string)$xml->definitions->headerData->sapUniverseID,
             'sap_universe_name' => (string)$xml->definitions->headerData->sapUniverseName,
-            'show_on_line' => filter_var((string)$xml->definitions->headerData->showOnLine, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'show_on_line' => $xml->definitions->headerData->showOnLine ? 1 : 0,
             'size_guide' => (string)$xml->definitions->headerData->sizeGuide,
             'source_id' => (string)$xml->definitions->headerData->sourceID,
             'user_of_creation' => (string)$xml->definitions->headerData->userOfCreation,
             'waistline_description' => (string)$xml->definitions->headerData->waistlineDescription,
             'washability' => (string)$xml->definitions->headerData->washability,
             'washability_description' => (string)$xml->definitions->headerData->washabilityDescription,
-            'zip_stopper' => filter_var((string)$xml->definitions->headerData->zipStopper, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'zip_stopper' => $xml->definitions->headerData->zipStopper ? 1 : 0,
         ];
 
+        // Parse product features data
+        // NOTE: missing an present product features will be stored in the same table and will be differentiated by
+        // is_missing column
         $products_features = [];
+
         foreach ($xml->definitions->headerData->productFeatures as $productFeature){
             $products_features[] = [
                 'product_id' => (string)$xml->productID,
-                'feature' => $productFeature,
+                'feature' => (string)$productFeature,
                 'is_missing' => 0
             ];
         }
@@ -133,7 +143,7 @@ class Parser {
         foreach ($xml->definitions->headerData->productMissingFeatures as $productFeature){
             $products_features[] = [
                 'product_id' => (string)$xml->productID,
-                'feature' => $productFeature,
+                'feature' => (string)$productFeature,
                 'is_missing' => 1
             ];
         }
@@ -142,7 +152,7 @@ class Parser {
         return [
             'product' => $product,
             'details' => $details,
-            'products_headers' => $products_headers,
+            'product_headers' => $product_headers,
             'product_features' => $products_features
         ];
     }

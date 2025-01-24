@@ -1,16 +1,16 @@
 <?php
 
 /**
- *
+ * Handles the database connection using PDO.
  */
 class Database {
     /**
-     * @var PDO
+     * @var PDO The PDO instance used for database interactions.
      */
     private PDO $pdo;
 
     /**
-     *
+     * Initializes the database connection using configuration from a file.
      */
     public function __construct() {
         $config = require __DIR__ . '/../config/database.php';
@@ -20,7 +20,9 @@ class Database {
     }
 
     /**
-     * @return PDO
+     * Gets the PDO connection instance.
+     *
+     * @return PDO The active PDO connection.
      */
     public function getConnection(): PDO
     {

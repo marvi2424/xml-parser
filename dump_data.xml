@@ -4,7 +4,7 @@
     <defaultLanguage>en_GB</defaultLanguage>
     <definitions>
         <detailsData>
-            <cedi>CD01-df</cedi>
+            <cedi>CD01</cedi>
             <childWeightFrom>0.0</childWeightFrom>
             <childWeightTo>0.0</childWeightTo>
             <color_code>030</color_code>

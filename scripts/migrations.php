@@ -24,7 +24,7 @@ function createTables($pdo) {
     ";
 
     $createDetailsDataTable = "
-        CREATE TABLE IF NOT EXISTS details_data (
+        CREATE TABLE IF NOT EXISTS product_details (
             id INT AUTO_INCREMENT PRIMARY KEY,
             product_id VARCHAR(50) DEFAULT NULL,
             cedi VARCHAR(10) DEFAULT NULL,
@@ -51,72 +51,72 @@ function createTables($pdo) {
         );
     ";
 
-    $createHeaderDataTable = "
-            CREATE TABLE header_data (
+    $createProductHeadersTable = "
+        CREATE TABLE IF NOT EXISTS product_headers (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            productID VARCHAR(50) NOT NULL,
+            product_id VARCHAR(50) NOT NULL,
             bag BOOLEAN DEFAULT NULL,
-            bleachingDescription TEXT DEFAULT NULL,
+            bleaching_description TEXT DEFAULT NULL,
             brand VARCHAR(100) DEFAULT NULL,
-            brandCode VARCHAR(50) DEFAULT NULL,
+            brand_code VARCHAR(50) DEFAULT NULL,
             catalog VARCHAR(100) DEFAULT NULL,
             composition TEXT DEFAULT NULL,
-            creationDateInDatabase DATETIME DEFAULT NULL,
-            custom1 TEXT DEFAULT NULL,
-            custom2 TEXT DEFAULT NULL,
-            custom3 TEXT DEFAULT NULL,
-            drinkHolder BOOLEAN DEFAULT NULL,
-            dryCleaningDescription TEXT DEFAULT NULL,
-            dryingDescription TEXT DEFAULT NULL,
-            EShopDisplayName TEXT DEFAULT NULL,
-            EShopLongDescription TEXT DEFAULT NULL,
-            ergonomicSeat BOOLEAN DEFAULT NULL,
-            fasteningTypeDescription TEXT DEFAULT NULL,
-            fasteningTypeTextile TEXT DEFAULT NULL,
+            creation_date_in_database DATETIME DEFAULT NULL,
+            custom_1 TEXT DEFAULT NULL,
+            custom_2 TEXT DEFAULT NULL,
+            custom_3 TEXT DEFAULT NULL,
+            drink_holder BOOLEAN DEFAULT NULL,
+            dry_cleaning_description TEXT DEFAULT NULL,
+            drying_description TEXT DEFAULT NULL,
+            e_shop_display_name TEXT DEFAULT NULL,
+            e_shop_long_description TEXT DEFAULT NULL,
+            ergonomic_seat BOOLEAN DEFAULT NULL,
+            fastening_type_description TEXT DEFAULT NULL,
+            fastening_type_textile TEXT DEFAULT NULL,
             flat BOOLEAN DEFAULT NULL,
-            freeDelivery BOOLEAN DEFAULT NULL,
+            free_delivery BOOLEAN DEFAULT NULL,
             gender VARCHAR(50) DEFAULT NULL,
-            indicatorOfItHasToBeAssembled BOOLEAN DEFAULT NULL,
-            ironingDescription TEXT DEFAULT NULL,
-            lastDateChanged DATETIME DEFAULT NULL,
-            lastUserChanged VARCHAR(100) DEFAULT NULL,
-            productFeatures TEXT DEFAULT NULL,
-            productMissingFeatures TEXT DEFAULT NULL,
-            productStatus TEXT DEFAULT NULL,
-            pulloutType TEXT DEFAULT NULL,
-            pulloutTypeDescription TEXT DEFAULT NULL,
+            indicator_of_it_has_to_be_assembled BOOLEAN DEFAULT NULL,
+            ironing_description TEXT DEFAULT NULL,
+            last_date_changed DATETIME DEFAULT NULL,
+            last_user_changed VARCHAR(100) DEFAULT NULL,
+            product_features TEXT DEFAULT NULL,
+            product_missing_features TEXT DEFAULT NULL,
+            product_status TEXT DEFAULT NULL,
+            pullout_type TEXT DEFAULT NULL,
+            pullout_type_description TEXT DEFAULT NULL,
             punnet BOOLEAN DEFAULT NULL,
-            sapCategoryID VARCHAR(50) DEFAULT NULL,
-            sapCategoryName VARCHAR(100) DEFAULT NULL,
-            sapDivisionID VARCHAR(50) DEFAULT NULL,
-            sapDivisionName VARCHAR(100) DEFAULT NULL,
-            sapFamilyDescription TEXT DEFAULT NULL,
-            sapFamilyID VARCHAR(50) DEFAULT NULL,
-            sapFamilyName VARCHAR(100) DEFAULT NULL,
-            sapMacrocategoryID VARCHAR(50) DEFAULT NULL,
-            sapMacrocategoryName VARCHAR(100) DEFAULT NULL,
-            sapName VARCHAR(255) DEFAULT NULL,
-            sapUniverseID VARCHAR(50) DEFAULT NULL,
-            sapUniverseName VARCHAR(100) DEFAULT NULL,
-            showOnLine BOOLEAN DEFAULT NULL,
-            sizeGuide VARCHAR(50) DEFAULT NULL,
-            sourceID TEXT DEFAULT NULL,
-            userOfCreation VARCHAR(100) DEFAULT NULL,
-            waistlineDescription TEXT DEFAULT NULL,
+            sap_category_id VARCHAR(50) DEFAULT NULL,
+            sap_category_name VARCHAR(100) DEFAULT NULL,
+            sap_division_id VARCHAR(50) DEFAULT NULL,
+            sap_division_name VARCHAR(100) DEFAULT NULL,
+            sap_family_description TEXT DEFAULT NULL,
+            sap_family_id VARCHAR(50) DEFAULT NULL,
+            sap_family_name VARCHAR(100) DEFAULT NULL,
+            sap_macrocategory_id VARCHAR(50) DEFAULT NULL,
+            sap_macrocategory_name VARCHAR(100) DEFAULT NULL,
+            sap_name VARCHAR(255) DEFAULT NULL,
+            sap_universe_id VARCHAR(50) DEFAULT NULL,
+            sap_universe_name VARCHAR(100) DEFAULT NULL,
+            show_on_line BOOLEAN DEFAULT NULL,
+            size_guide VARCHAR(50) DEFAULT NULL,
+            source_id TEXT DEFAULT NULL,
+            user_of_creation VARCHAR(100) DEFAULT NULL,
+            waistline_description TEXT DEFAULT NULL,
             washability TEXT DEFAULT NULL,
-            washabilityDescription TEXT DEFAULT NULL,
-            zipStopper BOOLEAN DEFAULT NULL,
-            FOREIGN KEY (productID) REFERENCES products(productID)
+            washability_description TEXT DEFAULT NULL,
+            zip_stopper BOOLEAN DEFAULT NULL,
+            FOREIGN KEY (product_id) REFERENCES products(product_id)
         );
     ";
 
     $createProductFeaturesTable = "
-        CREATE TABLE product_features (
+        CREATE TABLE IF NOT EXISTS product_features (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            productID VARCHAR(50) NOT NULL, -- Foreign key to products table
+            product_id VARCHAR(50) NOT NULL, -- Foreign key to products table
             feature VARCHAR(255) DEFAULT NULL,
             is_missing TINYINT(1) DEFAULT NULL,
-            FOREIGN KEY (productID) REFERENCES products(productID)
+            FOREIGN KEY (product_id) REFERENCES products(product_id)
         );
     ";
 
@@ -124,6 +124,8 @@ function createTables($pdo) {
         // Execute the table creation SQL commands
         $pdo->exec($createProductsTable);
         $pdo->exec($createDetailsDataTable);
+        $pdo->exec($createProductHeadersTable);
+        $pdo->exec($createProductFeaturesTable);
         echo "Tables checked and created if necessary.\n";
     } catch (PDOException $e) {
         echo "Error creating tables: " . $e->getMessage() . "\n";
